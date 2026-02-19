@@ -7,18 +7,21 @@
   <meta name="description" content="News, updates, and tips from the Nonopix team.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0f0f13;
-      --surface: #1a1a24;
-      --primary: #6c5ce7;
-      --primary-light: #a29bfe;
-      --text: #f0f0f5;
-      --text-muted: #9090a0;
-      --radius: 12px;
+      --bg:           #f5f0e8;
+      --bg-alt:       #ece6da;
+      --surface:      #faf7f2;
+      --primary:      #d4872c;
+      --primary-light:#e9a84c;
+      --text:         #3d2e1e;
+      --text-heading: #2a1f12;
+      --text-muted:   #8a7560;
+      --border:       #e0d6c8;
+      --radius:       12px;
     }
 
     body {
@@ -30,6 +33,7 @@
       flex-direction: column;
     }
 
+    /* ---- NAV ---- */
     nav {
       display: flex;
       justify-content: space-between;
@@ -38,27 +42,42 @@
       max-width: 1100px;
       width: 100%;
       margin: 0 auto;
+      border-bottom: 1px solid var(--border);
     }
     .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text);
       text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
     }
-    .logo span { color: var(--primary-light); }
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.65rem;
+      color: var(--text-heading);
+    }
+    .logo-text span { color: var(--primary); }
+    .logo-sub {
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
     nav ul { list-style: none; display: flex; gap: 1.75rem; }
-    nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
     nav a:hover { color: var(--text); }
 
+    /* ---- PAGE HEADER ---- */
     .page-header {
       max-width: 720px;
       margin: 3rem auto 2rem;
       padding: 0 2rem;
     }
     .page-header h1 {
+      font-family: 'DM Serif Display', serif;
       font-size: 2.25rem;
-      font-weight: 700;
+      color: var(--text-heading);
       margin-bottom: 0.5rem;
     }
     .page-header p {
@@ -66,6 +85,7 @@
       font-size: 1.05rem;
     }
 
+    /* ---- POSTS ---- */
     .posts {
       max-width: 720px;
       margin: 0 auto;
@@ -78,14 +98,17 @@
 
     .post-card {
       background: var(--surface);
-      border: 1px solid #2a2a3a;
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 1.5rem;
       text-decoration: none;
       color: var(--text);
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .post-card:hover { border-color: var(--primary); }
+    .post-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 4px 16px rgba(212,135,44,0.08);
+    }
     .post-card time {
       font-size: 0.8rem;
       color: var(--text-muted);
@@ -93,44 +116,85 @@
       letter-spacing: 0.5px;
     }
     .post-card h2 {
-      font-size: 1.15rem;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--text-heading);
       margin: 0.5rem 0 0.4rem;
     }
     .post-card p {
       color: var(--text-muted);
       font-size: 0.9rem;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
-    }
-    .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; }
-    .empty-state h2 { color: var(--text); margin-bottom: 0.5rem; }
-
+    /* ---- FOOTER ---- */
     footer {
-      border-top: 1px solid #1e1e2e;
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    footer a { color: var(--text-muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .footer-brand .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text-heading);
+    }
+    .footer-brand .logo-text span { color: var(--primary); }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
 
+    /* ---- RESPONSIVE ---- */
     @media (max-width: 600px) {
-      nav { padding: 1rem; }
+      nav { padding: 1rem 1.25rem; }
       nav ul { gap: 1rem; }
       .page-header { margin-top: 2rem; }
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 2rem 1.25rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
     }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="/" class="logo">Nono<span>pix</span></a>
+    <a href="/" class="logo">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="logo-sub">Daily Nonogram</span>
+    </a>
     <ul>
       <li><a href="/">Home</a></li>
       <li><a href="/blog">Blog</a></li>
@@ -157,7 +221,16 @@
   </section>
 
   <footer>
-    <p>&copy; 2026 Nonopix &nbsp;&middot;&nbsp; <a href="/">Home</a></p>
+    <div class="footer-brand">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="footer-tagline">Daily Nonogram Puzzles</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+    <span class="footer-copy">&copy; 2026 NonoPix</span>
   </footer>
 
 </body>
