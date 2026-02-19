@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NonoPix Feature Graphic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; }
+    p { color: #888; font-size: 0.9rem; margin-top: 0.25rem; }
+    .preview canvas {
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      border-radius: 4px;
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      background: #e8735a;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: #f0a848; }
+    .note {
+      color: #666;
+      font-size: 0.75rem;
+      max-width: 600px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center">
+    <h1>NonoPix Feature Graphic</h1>
+    <p>Google Play feature graphic — 1024 &times; 500 px</p>
+  </div>
+
+  <div class="preview">
+    <canvas id="canvas" width="1024" height="500"></canvas>
+  </div>
+
+  <button onclick="download()">Download PNG</button>
+
+  <p class="note">Google Play requires a PNG or JPEG, up to 15 MB, exactly 1024 &times; 500 px.</p>
+
+  <script>
+    // ── Shared palette ──────────────────────────────────────────
+    const SHADES = [
+      [null,      null,      '#f0a848', null,      '#f0a848', null,      null],
+      [null,      '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', null],
+      ['#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a'],
+      ['#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#c94f6d'],
+      [null,      '#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#c94f6d', null],
+      [null,      null,      '#c94f6d', '#e8735a', '#c94f6d', null,      null],
+      [null,      null,      null,      '#c94f6d', null,      null,      null],
+    ];
+    const COLS = 7;
+    const BG       = '#f5f0e8';
+    const EMPTY_BG = '#ece6da';
+    const EMPTY_BD = '#e0d6c8';
+    const CLUE_CLR = '#8a7560';
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function drawFeatureGraphic(canvas) {
+      const W = canvas.width;   // 1024
+      const H = canvas.height;  // 500
+      const ctx = canvas.getContext('2d');
+
+      // ── Background: warm beige with subtle gradient ──
+      const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+      bgGrad.addColorStop(0, '#f7f2ea');
+      bgGrad.addColorStop(0.5, '#f5f0e8');
+      bgGrad.addColorStop(1, '#f0ebe1');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Subtle decorative dots (scattered empty cells) ──
+      ctx.save();
+      const dotPositions = [
+        // left area scattered
+        { x: 40,  y: 35,  s: 18, a: 0.15 },
+        { x: 85,  y: 70,  s: 14, a: 0.10 },
+        { x: 25,  y: 130, s: 12, a: 0.08 },
+        { x: 110, y: 25,  s: 10, a: 0.06 },
+        { x: 60,  y: 180, s: 16, a: 0.10 },
+        // top scattered
+        { x: 300, y: 20,  s: 10, a: 0.06 },
+        { x: 460, y: 15,  s: 12, a: 0.07 },
+        // bottom scattered
+        { x: 80,  y: 420, s: 14, a: 0.10 },
+        { x: 150, y: 460, s: 10, a: 0.06 },
+        { x: 380, y: 465, s: 12, a: 0.07 },
+        // right scattered
+        { x: 940, y: 50,  s: 14, a: 0.10 },
+        { x: 980, y: 120, s: 10, a: 0.06 },
+        { x: 960, y: 400, s: 16, a: 0.10 },
+        { x: 990, y: 460, s: 12, a: 0.07 },
+      ];
+      dotPositions.forEach(d => {
+        ctx.globalAlpha = d.a;
+        ctx.fillStyle = EMPTY_BG;
+        ctx.strokeStyle = EMPTY_BD;
+        ctx.lineWidth = 1;
+        roundRect(ctx, d.x, d.y, d.s, d.s, d.s * 0.2);
+        ctx.fill();
+        ctx.stroke();
+      });
+      ctx.restore();
+
+      // ── Warm radial glow behind the heart ──
+      const heartCenterX = W * 0.68;
+      const heartCenterY = H * 0.48;
+      ctx.save();
+      const glow = ctx.createRadialGradient(heartCenterX, heartCenterY, 0, heartCenterX, heartCenterY, 260);
+      glow.addColorStop(0, 'rgba(232, 115, 90, 0.10)');
+      glow.addColorStop(0.5, 'rgba(240, 168, 72, 0.06)');
+      glow.addColorStop(1, 'rgba(240, 168, 72, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+
+      // ── Heart grid (right side) ──
+      const cellSize = 46;
+      const gap = 3;
+      const stride = cellSize + gap;
+      const gridTotal = COLS * cellSize + (COLS - 1) * gap;
+      const gridX = W * 0.68 - gridTotal / 2;
+      const gridY = H * 0.48 - gridTotal / 2;
+      const filledR = 5;
+      const emptyR = 3;
+
+      // Grid border
+      ctx.strokeStyle = EMPTY_BD;
+      ctx.lineWidth = 1;
+      const bPad = 2;
+      roundRect(ctx, gridX - bPad, gridY - bPad,
+                gridTotal + bPad * 2, gridTotal + bPad * 2, 3);
+      ctx.stroke();
+
+      // Cells
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = gridX + col * stride;
+          const y = gridY + row * stride;
+          const shade = SHADES[row][col];
+          if (shade) {
+            ctx.fillStyle = shade;
+            roundRect(ctx, x, y, cellSize, cellSize, filledR);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = EMPTY_BG;
+            ctx.strokeStyle = EMPTY_BD;
+            ctx.lineWidth = 1;
+            roundRect(ctx, x, y, cellSize, cellSize, emptyR);
+            ctx.fill();
+            ctx.stroke();
+          }
+        }
+      }
+
+      // ── Clue numbers around the grid ──
+      const COL_CLUES = ['2', '4', '6', '6', '6', '4', '2'];
+      const ROW_CLUES = ['1 1', '5', '7', '7', '5', '3', '1'];
+
+      ctx.fillStyle = CLUE_CLR;
+      ctx.font = "500 14px 'DM Mono', 'Courier New', monospace";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      for (let col = 0; col < COLS; col++) {
+        const cx = gridX + col * stride + cellSize / 2;
+        ctx.fillText(COL_CLUES[col], cx, gridY - 14);
+      }
+      ctx.textAlign = 'end';
+      for (let row = 0; row < COLS; row++) {
+        const cy = gridY + row * stride + cellSize / 2;
+        ctx.fillText(ROW_CLUES[row], gridX - 10, cy);
+      }
+
+      // ── Floating piece (concept B callback) ──
+      const floatShade = '#e8735a';
+      const fpX = gridX + gridTotal + 28;
+      const fpY = gridY - 10;
+      const fpSize = 34;
+
+      // Shadow
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.15)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 3;
+      ctx.translate(fpX + fpSize / 2, fpY + fpSize / 2);
+      ctx.rotate(8 * Math.PI / 180);
+      ctx.translate(-fpSize / 2, -fpSize / 2);
+      ctx.fillStyle = floatShade;
+      roundRect(ctx, 0, 0, fpSize, fpSize, 4);
+      ctx.fill();
+      // Highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      roundRect(ctx, 2, 2, fpSize - 4, fpSize * 0.4, 3);
+      ctx.fill();
+      ctx.restore();
+
+      // Small second floating piece (top-left of grid)
+      ctx.save();
+      const fp2X = gridX - 44;
+      const fp2Y = gridY + gridTotal - 20;
+      const fp2Size = 24;
+      ctx.globalAlpha = 0.5;
+      ctx.shadowColor = 'rgba(0,0,0,0.10)';
+      ctx.shadowBlur = 4;
+      ctx.translate(fp2X + fp2Size / 2, fp2Y + fp2Size / 2);
+      ctx.rotate(-12 * Math.PI / 180);
+      ctx.translate(-fp2Size / 2, -fp2Size / 2);
+      ctx.fillStyle = '#c94f6d';
+      roundRect(ctx, 0, 0, fp2Size, fp2Size, 3);
+      ctx.fill();
+      ctx.restore();
+
+      // ── Text (left side) ──
+      // "NonoPix" title
+      ctx.fillStyle = '#2a1f12';
+      ctx.font = "64px 'DM Serif Display', serif";
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+
+      const textX = 80;
+      const titleY = H * 0.40;
+
+      // Draw "Nono" in dark, "Pix" in coral
+      const nonoText = 'Nono';
+      const pixText = 'Pix';
+      ctx.fillStyle = '#2a1f12';
+      ctx.fillText(nonoText, textX, titleY);
+      const nonoWidth = ctx.measureText(nonoText).width;
+      ctx.fillStyle = '#e8735a';
+      ctx.fillText(pixText, textX + nonoWidth, titleY);
+
+      // Tagline
+      ctx.fillStyle = '#8a7560';
+      ctx.font = "500 20px 'Inter', system-ui, sans-serif";
+      ctx.fillText('Reveal pixel art, one clue at a time', textX, titleY + 40);
+
+      // Subtle "daily nonogram puzzles" badge
+      const badgeY = titleY + 72;
+      const badgeText = 'Daily Nonogram Puzzles';
+      ctx.font = "500 13px 'DM Mono', monospace";
+      const badgeW = ctx.measureText(badgeText).width + 20;
+      const badgeH = 28;
+      ctx.fillStyle = 'rgba(232, 115, 90, 0.10)';
+      roundRect(ctx, textX, badgeY, badgeW, badgeH, 6);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(232, 115, 90, 0.25)';
+      ctx.lineWidth = 1;
+      roundRect(ctx, textX, badgeY, badgeW, badgeH, 6);
+      ctx.stroke();
+      ctx.fillStyle = '#e8735a';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(badgeText, textX + 10, badgeY + badgeH / 2);
+
+      // ── Thin decorative line between text and grid ──
+      ctx.save();
+      ctx.strokeStyle = EMPTY_BD;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.5;
+      const lineX = W * 0.48;
+      ctx.beginPath();
+      ctx.moveTo(lineX, H * 0.2);
+      ctx.lineTo(lineX, H * 0.8);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Wait for fonts to load, then draw
+    document.fonts.ready.then(() => {
+      drawFeatureGraphic(document.getElementById('canvas'));
+    });
+
+    function download() {
+      const canvas = document.getElementById('canvas');
+      const link = document.createElement('a');
+      link.download = 'nonopix-feature-graphic-1024x500.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>

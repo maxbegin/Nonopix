@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NonoPix Icon Concepts</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; }
+    p.subtitle { color: #888; font-size: 0.9rem; margin-top: 0.25rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 750px;
+    }
+    .concept {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .concept canvas {
+      width: 300px;
+      height: 300px;
+      border-radius: 22%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    .concept .label {
+      font-size: 0.85rem;
+      color: #aaa;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center">
+    <h1>NonoPix Icon Concepts</h1>
+    <p class="subtitle">4 distinct icon directions — pick a favorite</p>
+  </div>
+
+  <div class="grid">
+    <div class="concept">
+      <canvas id="cA" width="512" height="512"></canvas>
+      <span class="label">A — Magnifying Glass</span>
+    </div>
+    <div class="concept">
+      <canvas id="cB" width="512" height="512"></canvas>
+      <span class="label">B — Last Piece</span>
+    </div>
+    <div class="concept">
+      <canvas id="cC" width="512" height="512"></canvas>
+      <span class="label">C — Stacked Cards</span>
+    </div>
+    <div class="concept">
+      <canvas id="cD" width="512" height="512"></canvas>
+      <span class="label">D — Radial Spotlight</span>
+    </div>
+  </div>
+
+  <script>
+    // ── Shared data ────────────────────────────────────────────
+    const SHADES = [
+      [null,      null,      '#f0a848', null,      '#f0a848', null,      null],
+      [null,      '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', null],
+      ['#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a'],
+      ['#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#c94f6d'],
+      [null,      '#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#c94f6d', null],
+      [null,      null,      '#c94f6d', '#e8735a', '#c94f6d', null,      null],
+      [null,      null,      null,      '#c94f6d', null,      null,      null],
+    ];
+
+    const COL_CLUES = ['2', '4', '6', '6', '6', '4', '2'];
+    const ROW_CLUES = ['1 1', '5', '7', '7', '5', '3', '1'];
+
+    const BG       = '#f5f0e8';
+    const EMPTY_BG = '#ece6da';
+    const EMPTY_BD = '#e0d6c8';
+    const CLUE_CLR = '#8a7560';
+    const COLS     = 7;
+
+    // ── Helpers ────────────────────────────────────────────────
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Metrics helper (based on 512px canvas)
+    function metrics(size) {
+      const s = size / 512;
+      const cellSize = 60 * s;
+      const gap = 4 * s;
+      const stride = cellSize + gap;
+      const gridOrigin = 48 * s;
+      const gridTotal = COLS * cellSize + (COLS - 1) * gap;
+      return { s, cellSize, gap, stride, gridOrigin, gridTotal,
+               filledR: 6 * s, emptyR: 4 * s, lw: Math.max(1, s) };
+    }
+
+    // Draw a filled cell (shade color)
+    function drawFilledCell(ctx, x, y, cellSize, r, shade) {
+      ctx.fillStyle = shade;
+      roundRect(ctx, x, y, cellSize, cellSize, r);
+      ctx.fill();
+    }
+
+    // Draw an empty outlined cell
+    function drawEmptyCell(ctx, x, y, cellSize, r, lw) {
+      ctx.fillStyle = EMPTY_BG;
+      ctx.strokeStyle = EMPTY_BD;
+      ctx.lineWidth = lw;
+      roundRect(ctx, x, y, cellSize, cellSize, r);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Draw the full solved heart grid
+    function drawSolvedGrid(ctx, m) {
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = m.gridOrigin + col * m.stride;
+          const y = m.gridOrigin + row * m.stride;
+          const shade = SHADES[row][col];
+          if (shade) {
+            drawFilledCell(ctx, x, y, m.cellSize, m.filledR, shade);
+          } else {
+            drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+          }
+        }
+      }
+    }
+
+    // Draw the empty puzzle grid (empty cells + border + clues)
+    function drawPuzzleGrid(ctx, m) {
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = m.gridOrigin + col * m.stride;
+          const y = m.gridOrigin + row * m.stride;
+          drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+        }
+      }
+      // Grid border
+      ctx.strokeStyle = EMPTY_BD;
+      ctx.lineWidth = m.lw;
+      const bPad = 2 * m.s;
+      roundRect(ctx, m.gridOrigin - bPad, m.gridOrigin - bPad,
+                m.gridTotal + bPad * 2, m.gridTotal + bPad * 2, 2 * m.s);
+      ctx.stroke();
+      // Clue numbers
+      drawClues(ctx, m);
+    }
+
+    // Draw clue numbers
+    function drawClues(ctx, m) {
+      ctx.fillStyle = CLUE_CLR;
+      const fontSize = Math.max(4, Math.round(18 * m.s));
+      ctx.font = fontSize + "px 'Courier New', monospace";
+      // Column clues
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const clueTopY = 36 * m.s;
+      for (let col = 0; col < COLS; col++) {
+        const cx = m.gridOrigin + col * m.stride + m.cellSize / 2;
+        ctx.fillText(COL_CLUES[col], cx, clueTopY);
+      }
+      // Row clues
+      ctx.textAlign = 'end';
+      const clueLeftX = 40 * m.s;
+      for (let row = 0; row < COLS; row++) {
+        const cy = m.gridOrigin + row * m.stride + m.cellSize / 2;
+        ctx.fillText(ROW_CLUES[row], clueLeftX, cy);
+      }
+    }
+
+    // ── Concept A — Magnifying Glass Reveal ─────────────────────
+    function drawConceptA(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext('2d');
+      const m = metrics(size);
+
+      // Background
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+
+      // Base layer: faint empty grid with clues
+      drawPuzzleGrid(ctx, m);
+
+      // Magnifying glass parameters
+      const lensCX = m.gridOrigin + m.gridTotal * 0.58; // center-right of grid
+      const lensCY = m.gridOrigin + m.gridTotal * 0.45;
+      const lensR  = m.gridTotal * 0.34;
+      const rimWidth = 8 * m.s;
+      const handleLen = lensR * 1.1;
+      const handleAngle = Math.PI * 0.75; // toward bottom-right
+      const handleWidth = 16 * m.s;
+
+      // --- Solved cells inside the lens (clipped) ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(lensCX, lensCY, lensR - rimWidth / 2, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Warm tint background inside lens
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+      const warmOverlay = ctx.createRadialGradient(lensCX, lensCY, 0, lensCX, lensCY, lensR);
+      warmOverlay.addColorStop(0, 'rgba(232, 115, 90, 0.08)');
+      warmOverlay.addColorStop(1, 'rgba(232, 115, 90, 0.03)');
+      ctx.fillStyle = warmOverlay;
+      ctx.fillRect(0, 0, size, size);
+
+      // Draw solved cells inside lens at 1.15x scale (centered on lens)
+      ctx.save();
+      ctx.translate(lensCX, lensCY);
+      ctx.scale(1.15, 1.15);
+      ctx.translate(-lensCX, -lensCY);
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = m.gridOrigin + col * m.stride;
+          const y = m.gridOrigin + row * m.stride;
+          const shade = SHADES[row][col];
+          if (shade) {
+            drawFilledCell(ctx, x, y, m.cellSize, m.filledR, shade);
+          } else {
+            drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+          }
+        }
+      }
+      ctx.restore();
+      ctx.restore();
+
+      // --- Handle (drawn behind the rim) ---
+      ctx.save();
+      const hx = lensCX + Math.cos(handleAngle) * lensR;
+      const hy = lensCY + Math.sin(handleAngle) * lensR;
+      const hx2 = hx + Math.cos(handleAngle) * handleLen;
+      const hy2 = hy + Math.sin(handleAngle) * handleLen;
+
+      // Handle shadow
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = 8 * m.s;
+      ctx.shadowOffsetX = 2 * m.s;
+      ctx.shadowOffsetY = 2 * m.s;
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.lineTo(hx2, hy2);
+      ctx.strokeStyle = '#8a7560';
+      ctx.lineWidth = handleWidth;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+
+      // Handle body
+      const handleGrad = ctx.createLinearGradient(hx, hy, hx2, hy2);
+      handleGrad.addColorStop(0, '#9a8570');
+      handleGrad.addColorStop(0.5, '#b8a48a');
+      handleGrad.addColorStop(1, '#8a7560');
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.lineTo(hx2, hy2);
+      ctx.strokeStyle = handleGrad;
+      ctx.lineWidth = handleWidth;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Handle highlight
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.lineTo(hx2, hy2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = handleWidth * 0.4;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+
+      // --- Lens rim ---
+      ctx.save();
+      // Rim shadow
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = 10 * m.s;
+      ctx.shadowOffsetX = 2 * m.s;
+      ctx.shadowOffsetY = 2 * m.s;
+      ctx.beginPath();
+      ctx.arc(lensCX, lensCY, lensR, 0, Math.PI * 2);
+      ctx.strokeStyle = '#5a4a3a';
+      ctx.lineWidth = rimWidth;
+      ctx.stroke();
+      ctx.restore();
+
+      // Rim highlight (top-left arc)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(lensCX, lensCY, lensR, -Math.PI * 0.9, -Math.PI * 0.4);
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = rimWidth * 0.5;
+      ctx.stroke();
+      ctx.restore();
+
+      // --- Glass highlight (white arc top-left of lens) ---
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.arc(lensCX - lensR * 0.25, lensCY - lensR * 0.25, lensR * 0.55, -Math.PI * 0.85, -Math.PI * 0.35);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 4 * m.s;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── Concept B — Last Piece Dropping In ───────────────────────
+    function drawConceptB(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext('2d');
+      const m = metrics(size);
+
+      // Background
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+
+      // Target cell: row 3, col 3 (center of heart)
+      const targetRow = 3;
+      const targetCol = 3;
+      const floatOffset = 22 * m.s;
+      const rotation = 4 * Math.PI / 180; // 4 degrees
+
+      // Draw all cells normally except the target cell
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          if (row === targetRow && col === targetCol) continue;
+          const x = m.gridOrigin + col * m.stride;
+          const y = m.gridOrigin + row * m.stride;
+          const shade = SHADES[row][col];
+          if (shade) {
+            drawFilledCell(ctx, x, y, m.cellSize, m.filledR, shade);
+          } else {
+            drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+          }
+        }
+      }
+
+      // Grid border
+      ctx.strokeStyle = EMPTY_BD;
+      ctx.lineWidth = m.lw;
+      const bPad = 2 * m.s;
+      roundRect(ctx, m.gridOrigin - bPad, m.gridOrigin - bPad,
+                m.gridTotal + bPad * 2, m.gridTotal + bPad * 2, 2 * m.s);
+      ctx.stroke();
+
+      // Clue numbers
+      drawClues(ctx, m);
+
+      // Draw the empty slot with a subtle inset shadow
+      const slotX = m.gridOrigin + targetCol * m.stride;
+      const slotY = m.gridOrigin + targetRow * m.stride;
+      ctx.save();
+      ctx.fillStyle = '#e8dfd2';
+      roundRect(ctx, slotX, slotY, m.cellSize, m.cellSize, m.emptyR);
+      ctx.fill();
+      // Inset shadow effect
+      ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 2 * m.s;
+      roundRect(ctx, slotX + 1 * m.s, slotY + 1 * m.s, m.cellSize - 2 * m.s, m.cellSize - 2 * m.s, m.emptyR);
+      ctx.stroke();
+      ctx.restore();
+
+      // Motion trail / ghost copies above the floating cell
+      const targetShade = SHADES[targetRow][targetCol]; // '#e8735a'
+      const cellCX = slotX + m.cellSize / 2;
+      const cellCY = slotY + m.cellSize / 2;
+
+      for (let i = 3; i >= 1; i--) {
+        ctx.save();
+        const trailOffset = floatOffset + i * 12 * m.s;
+        ctx.globalAlpha = 0.08 * (4 - i);
+        ctx.translate(cellCX, cellCY - trailOffset);
+        ctx.rotate(rotation * (1 + i * 0.2));
+        ctx.translate(-m.cellSize / 2, -m.cellSize / 2);
+        ctx.fillStyle = targetShade;
+        roundRect(ctx, 0, 0, m.cellSize, m.cellSize, m.filledR);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Floating target cell
+      ctx.save();
+      // Drop shadow on the grid
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = 12 * m.s;
+      ctx.shadowOffsetY = 6 * m.s;
+      ctx.shadowOffsetX = 2 * m.s;
+
+      ctx.translate(cellCX, cellCY - floatOffset);
+      ctx.rotate(rotation);
+      ctx.translate(-m.cellSize / 2, -m.cellSize / 2);
+
+      ctx.fillStyle = targetShade;
+      roundRect(ctx, 0, 0, m.cellSize, m.cellSize, m.filledR);
+      ctx.fill();
+
+      // Subtle highlight on the floating cell
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      roundRect(ctx, 2 * m.s, 2 * m.s, m.cellSize - 4 * m.s, m.cellSize * 0.4, m.filledR);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Concept C — Stacked Cards / Exploded View ────────────────
+    function drawConceptC(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext('2d');
+      const m = metrics(size);
+
+      // Background
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+
+      // Card dimensions and offsets
+      const cardW = size * 0.78;
+      const cardH = size * 0.78;
+      const cardR = 24 * m.s; // card corner radius
+      const offsetX = 20 * m.s;
+      const offsetY = 20 * m.s;
+
+      // Back card position (bottom-left, peeking out)
+      const backX = size * 0.05;
+      const backY = size * 0.17;
+
+      // Front card position (top-right, overlapping)
+      const frontX = backX + offsetX;
+      const frontY = backY - offsetY;
+
+      // Scale factor: cards are slightly smaller than full 512px
+      const cardScale = cardW / size;
+
+      // --- Back card: solved heart ---
+      ctx.save();
+      // Card shadow
+      ctx.shadowColor = 'rgba(0,0,0,0.25)';
+      ctx.shadowBlur = 16 * m.s;
+      ctx.shadowOffsetX = -2 * m.s;
+      ctx.shadowOffsetY = 4 * m.s;
+
+      // Card background
+      roundRect(ctx, backX, backY, cardW, cardH, cardR);
+      ctx.fillStyle = BG;
+      ctx.fill();
+      ctx.save();
+
+      // Clip to card shape and draw solved grid
+      roundRect(ctx, backX, backY, cardW, cardH, cardR);
+      ctx.clip();
+
+      // Translate and scale to fit the grid inside the card
+      ctx.translate(backX, backY);
+      ctx.scale(cardScale, cardScale);
+      drawSolvedGrid(ctx, m);
+      ctx.restore();
+
+      // Card border
+      ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 1.5 * m.s;
+      roundRect(ctx, backX, backY, cardW, cardH, cardR);
+      ctx.stroke();
+      ctx.restore();
+
+      // --- Front card: empty puzzle ---
+      ctx.save();
+      // Card shadow
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = 20 * m.s;
+      ctx.shadowOffsetX = -3 * m.s;
+      ctx.shadowOffsetY = 5 * m.s;
+
+      // Card background
+      roundRect(ctx, frontX, frontY, cardW, cardH, cardR);
+      ctx.fillStyle = BG;
+      ctx.fill();
+      ctx.save();
+
+      // Clip to card shape and draw puzzle grid
+      roundRect(ctx, frontX, frontY, cardW, cardH, cardR);
+      ctx.clip();
+
+      ctx.translate(frontX, frontY);
+      ctx.scale(cardScale, cardScale);
+      drawPuzzleGrid(ctx, m);
+      ctx.restore();
+
+      // Card border
+      ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+      ctx.lineWidth = 1.5 * m.s;
+      roundRect(ctx, frontX, frontY, cardW, cardH, cardR);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── Concept D — Radial Spotlight ─────────────────────────────
+    function drawConceptD(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext('2d');
+      const m = metrics(size);
+
+      // Background
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+
+      // Spotlight center = heart center (row 3, col 3)
+      const spotCX = m.gridOrigin + 3 * m.stride + m.cellSize / 2;
+      const spotCY = m.gridOrigin + 3 * m.stride + m.cellSize / 2;
+      const maxCellDist = m.gridTotal * 0.55; // reference radius
+
+      // Warm background glow behind the center
+      ctx.save();
+      const bgGlow = ctx.createRadialGradient(spotCX, spotCY, 0, spotCX, spotCY, maxCellDist * 1.2);
+      bgGlow.addColorStop(0, 'rgba(232, 115, 90, 0.2)');
+      bgGlow.addColorStop(0.5, 'rgba(232, 115, 90, 0.08)');
+      bgGlow.addColorStop(1, 'rgba(232, 115, 90, 0)');
+      ctx.fillStyle = bgGlow;
+      ctx.beginPath();
+      ctx.arc(spotCX, spotCY, maxCellDist * 1.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw cells based on radial distance
+      const innerR = 0.40; // fully solved
+      const outerR = 0.65; // transition ends here
+
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = m.gridOrigin + col * m.stride;
+          const y = m.gridOrigin + row * m.stride;
+          const cx = x + m.cellSize / 2;
+          const cy = y + m.cellSize / 2;
+          const shade = SHADES[row][col];
+
+          // Normalized distance from spotlight center
+          const dx = cx - spotCX;
+          const dy = cy - spotCY;
+          const dist = Math.sqrt(dx * dx + dy * dy) / maxCellDist;
+
+          if (dist < innerR) {
+            // Fully solved - vibrant
+            if (shade) {
+              ctx.save();
+              ctx.shadowColor = 'rgba(232, 115, 90, 0.4)';
+              ctx.shadowBlur = 6 * m.s;
+              drawFilledCell(ctx, x, y, m.cellSize, m.filledR, shade);
+              ctx.restore();
+            } else {
+              drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+            }
+          } else if (dist < outerR) {
+            // Transition ring: solved but fading
+            const t = (dist - innerR) / (outerR - innerR); // 0..1
+            if (shade) {
+              ctx.save();
+              ctx.globalAlpha = 1 - t * 0.65;
+              ctx.shadowColor = 'rgba(232, 115, 90, ' + (0.3 * (1 - t)) + ')';
+              ctx.shadowBlur = 4 * m.s * (1 - t);
+              drawFilledCell(ctx, x, y, m.cellSize, m.filledR, shade);
+              ctx.restore();
+            } else {
+              ctx.save();
+              ctx.globalAlpha = 1 - t * 0.3;
+              drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+              ctx.restore();
+            }
+          } else {
+            // Outer: empty outlined cells
+            drawEmptyCell(ctx, x, y, m.cellSize, m.emptyR, m.lw);
+          }
+        }
+      }
+
+      // Subtle outer circle halo
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(spotCX, spotCY, maxCellDist * innerR, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(232, 115, 90, 0.12)';
+      ctx.lineWidth = 2 * m.s;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── Render all ─────────────────────────────────────────────
+    drawConceptA(document.getElementById('cA'));
+    drawConceptB(document.getElementById('cB'));
+    drawConceptC(document.getElementById('cC'));
+    drawConceptD(document.getElementById('cD'));
+  </script>
+</body>
+</html>

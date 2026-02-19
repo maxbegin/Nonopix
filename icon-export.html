@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NonoPix Icon Exporter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; }
+    p { color: #888; font-size: 0.9rem; margin-top: 0.25rem; }
+    .previews {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: end;
+    }
+    .preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .preview canvas {
+      border-radius: 22%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    .preview .size-label {
+      font-size: 0.8rem;
+      color: #888;
+    }
+    button {
+      background: #e8735a;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover { background: #f0a848; }
+    .all-sizes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem;
+      background: #222;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .all-sizes h2 { font-size: 1.1rem; font-weight: 600; }
+    .size-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .note {
+      color: #666;
+      font-size: 0.75rem;
+      max-width: 500px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>NonoPix Icon Exporter</h1>
+    <p>Click any button to download a PNG at that size.</p>
+  </div>
+
+  <div class="previews">
+    <div class="preview">
+      <canvas id="c1024" width="1024" height="1024"></canvas>
+      <span class="size-label">1024 &times; 1024 — App Store</span>
+      <button onclick="download(1024)">Download 1024px</button>
+    </div>
+    <div class="preview">
+      <canvas id="c512" width="512" height="512" style="width:256px;height:256px"></canvas>
+      <span class="size-label">512 &times; 512 — Google Play</span>
+      <button onclick="download(512)">Download 512px</button>
+    </div>
+    <div class="preview">
+      <canvas id="c192" width="192" height="192" style="width:192px;height:192px"></canvas>
+      <span class="size-label">192 &times; 192 — Android xxxhdpi</span>
+      <button onclick="download(192)">Download 192px</button>
+    </div>
+  </div>
+
+  <div class="all-sizes">
+    <h2>All Android adaptive icon sizes</h2>
+    <div class="size-list">
+      <button onclick="download(48)">48px (mdpi)</button>
+      <button onclick="download(72)">72px (hdpi)</button>
+      <button onclick="download(96)">96px (xhdpi)</button>
+      <button onclick="download(144)">144px (xxhdpi)</button>
+      <button onclick="download(192)">192px (xxxhdpi)</button>
+    </div>
+    <h2>iOS icon sizes</h2>
+    <div class="size-list">
+      <button onclick="download(60)">60px (@1x)</button>
+      <button onclick="download(120)">120px (@2x)</button>
+      <button onclick="download(180)">180px (@3x)</button>
+      <button onclick="download(1024)">1024px (Store)</button>
+    </div>
+    <h2>Other</h2>
+    <div class="size-list">
+      <button onclick="download(16)">16px favicon</button>
+      <button onclick="download(32)">32px favicon</button>
+      <button onclick="download(180)">180px apple-touch</button>
+      <button onclick="download(512)">512px web</button>
+    </div>
+  </div>
+
+  <p class="note">Icons are rendered with a square background. App stores and Android will apply their own mask (rounded rect / circle). The SVG source is <code>icon.svg</code> in the same directory.</p>
+
+  <script>
+    // Shade map for 7x7 heart — null = empty cell, color string = filled
+    // L = warm gold, M = warm coral, D = deep rose
+    const SHADES = [
+      [null,      null,      '#f0a848', null,      '#f0a848', null,      null],
+      [null,      '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', null],
+      ['#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a'],
+      ['#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#f0a848', '#e8735a', '#c94f6d'],
+      [null,      '#c94f6d', '#e8735a', '#f0a848', '#e8735a', '#c94f6d', null],
+      [null,      null,      '#c94f6d', '#e8735a', '#c94f6d', null,      null],
+      [null,      null,      null,      '#c94f6d', null,      null,      null],
+    ];
+
+    const COL_CLUES = ['2', '4', '6', '6', '6', '4', '2'];
+    const ROW_CLUES = ['1 1', '5', '7', '7', '5', '3', '1'];
+
+    const BG = '#f5f0e8';
+    const COLS = 7;
+
+    function drawIcon(canvas) {
+      const size = canvas.width;
+      const ctx = canvas.getContext('2d');
+      const scale = size / 512;
+
+      // Background
+      ctx.fillStyle = BG;
+      ctx.fillRect(0, 0, size, size);
+
+      // Layout (proportional to 512px base)
+      const gridOrigin = 48 * scale;
+      const cellSize = 60 * scale;
+      const gap = 4 * scale;
+      const stride = cellSize + gap;
+      const filledRadius = 6 * scale;
+      const emptyRadius = 4 * scale;
+      const gridTotal = COLS * cellSize + (COLS - 1) * gap;
+      const lineWidth = Math.max(1, scale);
+
+      // Draw cells
+      for (let row = 0; row < COLS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const x = gridOrigin + col * stride;
+          const y = gridOrigin + row * stride;
+          const shade = SHADES[row][col];
+
+          if (shade) {
+            ctx.fillStyle = shade;
+            roundRect(ctx, x, y, cellSize, cellSize, filledRadius);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = '#ece6da';
+            ctx.strokeStyle = '#e0d6c8';
+            ctx.lineWidth = lineWidth;
+            roundRect(ctx, x, y, cellSize, cellSize, emptyRadius);
+            ctx.fill();
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Grid border
+      ctx.strokeStyle = '#e0d6c8';
+      ctx.lineWidth = lineWidth;
+      const bPad = 2 * scale;
+      roundRect(ctx, gridOrigin - bPad, gridOrigin - bPad,
+                gridTotal + bPad * 2, gridTotal + bPad * 2, 2 * scale);
+      ctx.stroke();
+
+      // Clue numbers
+      ctx.fillStyle = '#8a7560';
+      const fontSize = Math.max(4, Math.round(18 * scale));
+      ctx.font = fontSize + "px 'Courier New', monospace";
+
+      // Column clues (centered above each column)
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const clueTopY = 36 * scale;
+      for (let col = 0; col < COLS; col++) {
+        const cx = gridOrigin + col * stride + cellSize / 2;
+        ctx.fillText(COL_CLUES[col], cx, clueTopY);
+      }
+
+      // Row clues (right-aligned left of each row)
+      ctx.textAlign = 'end';
+      const clueLeftX = 40 * scale;
+      for (let row = 0; row < COLS; row++) {
+        const cy = gridOrigin + row * stride + cellSize / 2;
+        ctx.fillText(ROW_CLUES[row], clueLeftX, cy);
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function download(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      drawIcon(canvas);
+      const link = document.createElement('a');
+      link.download = `nonopix-icon-${size}x${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Draw the 3 preview canvases
+    ['c1024', 'c512', 'c192'].forEach(id => {
+      const canvas = document.getElementById(id);
+      if (canvas) drawIcon(canvas);
+    });
+  </script>
+</body>
+</html>

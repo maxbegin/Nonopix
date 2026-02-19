@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background (square — stores apply their own mask) -->
+  <rect width="512" height="512" fill="#f5f0e8"/>
+
+  <!-- Layout: grid origin (48,48), cell 60px, gap 4px, stride 64px -->
+
+  <!-- Column clues (above grid) -->
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="78" y="36">2</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="142" y="36">4</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="206" y="36">6</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="270" y="36">6</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="334" y="36">6</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="398" y="36">4</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="middle" x="462" y="36">2</text>
+
+  <!-- Row clues (left of grid) -->
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="84">1 1</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="148">5</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="212">7</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="276">7</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="340">5</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="404">3</text>
+  <text font-family="'Courier New',monospace" font-size="18" fill="#8a7560" text-anchor="end" x="40" y="468">1</text>
+
+  <!-- Grid border -->
+  <rect x="46" y="46" width="448" height="448" rx="2" fill="none" stroke="#e0d6c8" stroke-width="1"/>
+
+  <!-- Row 0: _ _ L _ L _ _ -->
+  <rect x="48"  y="48"  width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="112" y="48"  width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="176" y="48"  width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="240" y="48"  width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="304" y="48"  width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="368" y="48"  width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="432" y="48"  width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+
+  <!-- Row 1: _ L M L M L _ -->
+  <rect x="48"  y="112" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="112" y="112" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="176" y="112" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="240" y="112" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="304" y="112" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="368" y="112" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="432" y="112" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+
+  <!-- Row 2: M L M L M L M -->
+  <rect x="48"  y="176" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="112" y="176" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="176" y="176" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="240" y="176" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="304" y="176" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="368" y="176" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="432" y="176" width="60" height="60" rx="6" fill="#e8735a"/>
+
+  <!-- Row 3: D M L M L M D -->
+  <rect x="48"  y="240" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="112" y="240" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="176" y="240" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="240" y="240" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="304" y="240" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="368" y="240" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="432" y="240" width="60" height="60" rx="6" fill="#c94f6d"/>
+
+  <!-- Row 4: _ D M L M D _ -->
+  <rect x="48"  y="304" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="112" y="304" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="176" y="304" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="240" y="304" width="60" height="60" rx="6" fill="#f0a848"/>
+  <rect x="304" y="304" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="368" y="304" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="432" y="304" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+
+  <!-- Row 5: _ _ D M D _ _ -->
+  <rect x="48"  y="368" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="112" y="368" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="176" y="368" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="240" y="368" width="60" height="60" rx="6" fill="#e8735a"/>
+  <rect x="304" y="368" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="368" y="368" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="432" y="368" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+
+  <!-- Row 6: _ _ _ D _ _ _ -->
+  <rect x="48"  y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="112" y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="176" y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="240" y="432" width="60" height="60" rx="6" fill="#c94f6d"/>
+  <rect x="304" y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="368" y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+  <rect x="432" y="432" width="60" height="60" rx="4" fill="#ece6da" stroke="#e0d6c8" stroke-width="1"/>
+</svg>
