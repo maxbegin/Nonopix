@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nonopix — Nonogram Puzzle App</title>
+  <meta name="description" content="Nonopix — the nonogram puzzle app for Android and iPhone. Download now and start solving!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --primary: #6c5ce7;
+      --primary-light: #a29bfe;
+      --text: #f0f0f5;
+      --text-muted: #9090a0;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--primary-light); }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.75rem;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* ---- HERO ---- */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem 6rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 .highlight { color: var(--primary-light); }
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ---- APP ICON PLACEHOLDER ---- */
+    .app-icon {
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      background: var(--surface);
+      border: 2px solid #2a2a3a;
+      display: grid;
+      place-items: center;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+    }
+
+    /* ---- STORE BUTTONS ---- */
+    .store-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid #2a2a3a;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .store-btn:hover {
+      background: #22223a;
+      border-color: var(--primary);
+    }
+    .store-btn svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .store-btn .label-small {
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      display: block;
+      line-height: 1;
+    }
+
+    /* ---- FEATURES ---- */
+    .features {
+      max-width: 900px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid #2a2a3a;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid #1e1e2e;
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--text); }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      nav { padding: 1rem; }
+      nav ul { gap: 1rem; }
+      .hero { padding: 3rem 1.25rem 4rem; }
+      .store-buttons { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">Nono<span>pix</span></a>
+    <ul>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="#features">Features</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="app-icon">🧩</div>
+    <h1>Solve puzzles.<br>Reveal <span class="highlight">pixel art.</span></h1>
+    <p>Nonopix is a nonogram puzzle game for Android and iPhone. Solve logic puzzles to uncover hidden pixel art — no guessing required.</p>
+    <div class="store-buttons">
+      <!-- Replace "#" with your actual store URLs -->
+      <a href="#" class="store-btn" aria-label="Download on the App Store">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        <div>
+          <span class="label-small">Download on the</span>
+          App Store
+        </div>
+      </a>
+      <a href="#" class="store-btn" aria-label="Get it on Google Play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.49c-.35-.2-.57-.59-.57-1.01V1.52c0-.42.22-.81.57-1.01l11.12 11.49L3.18 23.49zM14.89 12l2.15-2.23 4.63 2.63c.5.28.5.92 0 1.2l-4.63 2.63L14.89 12zm-1.06-1.1L5.04.81l10.7 6.08-1.91 4.01zm0 2.2l1.91 4.01-10.7 6.08 8.79-10.09z"/></svg>
+        <div>
+          <span class="label-small">Get it on</span>
+          Google Play
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="feature-card">
+      <h3>Hundreds of Puzzles</h3>
+      <p>From easy 5x5 grids to challenging large puzzles — there's always a new one to solve.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Pure Logic</h3>
+      <p>Every puzzle is solvable through logic alone. No guessing, no luck — just thinking.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Beautiful Pixel Art</h3>
+      <p>Complete puzzles to reveal charming pixel art images you can collect and share.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Nonopix &nbsp;&middot;&nbsp; <a href="/blog">Blog</a></p>
+  </footer>
+
+</body>
+</html>
