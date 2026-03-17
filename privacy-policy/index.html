@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — NonoPix</title>
+  <meta name="description" content="Privacy Policy for the NonoPix daily nonogram puzzle app.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #f5f0e8;
+      --bg-alt:       #ece6da;
+      --surface:      #faf7f2;
+      --primary:      #e8735a;
+      --primary-light:#f0a848;
+      --primary-bg:   #fdf0e0;
+      --text:         #3d2e1e;
+      --text-heading: #2a1f12;
+      --text-muted:   #8a7560;
+      --border:       #e0d6c8;
+      --gold:         #d4a026;
+      --success:      #5a9a3e;
+      --radius:       12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.65rem;
+      color: var(--text-heading);
+    }
+    .logo-text span { color: var(--primary); }
+    .logo-sub {
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.75rem;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* ---- POLICY CONTENT ---- */
+    .policy {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .policy h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--text-heading);
+      margin-bottom: 0.5rem;
+    }
+    .policy .effective-date {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .policy h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--text-heading);
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .policy p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .policy ul {
+      margin: 0 0 1rem 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .policy li {
+      margin-bottom: 0.35rem;
+    }
+    .policy a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .policy a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .footer-brand .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text-heading);
+    }
+    .footer-brand .logo-text span { color: var(--primary); }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      nav ul { gap: 1rem; }
+      .policy { padding: 2rem 1.25rem 3rem; }
+      footer { padding: 2rem 1.25rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="logo-sub">Daily Nonogram</span>
+    </a>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+  </nav>
+
+  <main class="policy">
+    <h1>Privacy Policy</h1>
+    <p class="effective-date">Effective date: March 17, 2026</p>
+
+    <p>NonoPix ("we", "our", or "the app") is a daily nonogram puzzle game developed by Maxime Begin. This privacy policy explains what information we collect, how we use it, and your rights regarding your data.</p>
+
+    <h2>Information We Collect</h2>
+    <p>NonoPix is designed to collect as little personal information as possible. We do not require you to create an account with an email address or password. When you use the app, we collect the following:</p>
+    <ul>
+      <li><strong>Anonymous user identifier</strong> — A randomly generated ID created when you first open the app. This is not linked to your name, email, or any personal information.</li>
+      <li><strong>Puzzle solve data</strong> — Your solve times, error counts, completion status, and difficulty tier for each puzzle you complete.</li>
+      <li><strong>App usage analytics</strong> — Events such as setting changes (sound, notifications), gameplay actions, and premium purchase events.</li>
+      <li><strong>Device metadata</strong> — Your device platform (iOS, Android, or Web) and app version number.</li>
+    </ul>
+
+    <h2>How We Use Your Information</h2>
+    <p>We use the collected information for the following purposes:</p>
+    <ul>
+      <li><strong>Leaderboards</strong> — Your solve times are used to rank players on daily and all-time leaderboards. Only your anonymous ID and solve data are shown.</li>
+      <li><strong>App improvement</strong> — Analytics help us understand how players use the app so we can improve the experience.</li>
+      <li><strong>Puzzle delivery</strong> — To sync your progress across sessions and deliver daily puzzles.</li>
+    </ul>
+
+    <h2>In-App Purchases</h2>
+    <p>NonoPix offers optional premium features through in-app purchases. Purchases are processed by your device's app store (Google Play or Apple App Store) and by RevenueCat, our payment processing partner. We do not collect or store your payment information directly. RevenueCat receives a purchase token to validate your subscription status. For more information, see <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener">RevenueCat's Privacy Policy</a>.</p>
+
+    <h2>Third-Party Services</h2>
+    <p>We use the following third-party services to operate the app:</p>
+    <ul>
+      <li><strong>Supabase</strong> — Cloud database and authentication. Stores your anonymous user ID, puzzle solve data, and analytics events. Data is encrypted in transit and protected by row-level security. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Supabase's Privacy Policy</a>.</li>
+      <li><strong>RevenueCat</strong> — In-app purchase management and subscription validation. See <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener">RevenueCat's Privacy Policy</a>.</li>
+    </ul>
+
+    <h2>Data Storage and Security</h2>
+    <p>Your data is stored on Supabase's cloud infrastructure. All data is transmitted over encrypted connections (HTTPS/TLS). Database access is restricted using row-level security policies, meaning each user can only access their own data.</p>
+    <p>Some data is also stored locally on your device (solve history, preferences, and in-progress puzzles) using the app's local storage.</p>
+
+    <h2>Data Retention and Deletion</h2>
+    <p>We retain your data for as long as you use the app. If you would like to request deletion of your data, please contact us at <a href="mailto:maxime.begin@gmail.com">maxime.begin@gmail.com</a>. We will delete your data within 30 days of receiving your request.</p>
+
+    <h2>Children's Privacy</h2>
+    <p>NonoPix is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us and we will promptly delete it.</p>
+
+    <h2>Your Rights</h2>
+    <p>Depending on your location, you may have the right to:</p>
+    <ul>
+      <li>Request access to the data we hold about you</li>
+      <li>Request correction or deletion of your data</li>
+      <li>Object to or restrict the processing of your data</li>
+    </ul>
+    <p>To exercise any of these rights, please contact us at <a href="mailto:maxime.begin@gmail.com">maxime.begin@gmail.com</a>.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>We may update this privacy policy from time to time. If we make significant changes, we will notify users through an app update. The "Effective date" at the top of this page indicates when the policy was last revised.</p>
+
+    <h2>Contact Us</h2>
+    <p>If you have any questions about this privacy policy or your data, please contact:</p>
+    <p>Maxime Begin<br><a href="mailto:maxime.begin@gmail.com">maxime.begin@gmail.com</a></p>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="footer-tagline">Daily Nonogram Puzzles</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/privacy-policy">Privacy Policy</a></li>
+    </ul>
+    <span class="footer-copy">&copy; 2026 NonoPix</span>
+  </footer>
+
+</body>
+</html>
