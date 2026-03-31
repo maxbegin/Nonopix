@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support — NonoPix</title>
+  <meta name="description" content="Get help with NonoPix, the daily nonogram puzzle app. Contact support, report bugs, or request features.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #f5f0e8;
+      --bg-alt:       #ece6da;
+      --surface:      #faf7f2;
+      --primary:      #e8735a;
+      --primary-light:#f0a848;
+      --primary-bg:   #fdf0e0;
+      --text:         #3d2e1e;
+      --text-heading: #2a1f12;
+      --text-muted:   #8a7560;
+      --border:       #e0d6c8;
+      --gold:         #d4a026;
+      --success:      #5a9a3e;
+      --radius:       12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.65rem;
+      color: var(--text-heading);
+    }
+    .logo-text span { color: var(--primary); }
+    .logo-sub {
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.75rem;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* ---- SUPPORT CONTENT ---- */
+    .support {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .support h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--text-heading);
+      margin-bottom: 0.5rem;
+    }
+    .support .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+    .support h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--text-heading);
+      margin-top: 2.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .support p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .support ul {
+      margin: 0 0 1rem 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .support li {
+      margin-bottom: 0.35rem;
+    }
+    .support a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .support a:hover {
+      text-decoration: underline;
+    }
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+    }
+    .contact-card p {
+      margin-bottom: 0.5rem;
+    }
+    .contact-card p:last-child {
+      margin-bottom: 0;
+    }
+    .faq-item {
+      margin-bottom: 1.5rem;
+    }
+    .faq-item h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin-bottom: 0.4rem;
+    }
+    .faq-item p {
+      margin-bottom: 0;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .footer-brand .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text-heading);
+    }
+    .footer-brand .logo-text span { color: var(--primary); }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      nav ul { gap: 1rem; }
+      .support { padding: 2rem 1.25rem 3rem; }
+      footer { padding: 2rem 1.25rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="logo-sub">Daily Nonogram</span>
+    </a>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/support">Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="support">
+    <h1>Support</h1>
+    <p class="subtitle">Need help with NonoPix? We're here for you. Check the FAQ below or reach out directly.</p>
+
+    <h2>Contact Us</h2>
+    <div class="contact-card">
+      <p>For bug reports, feature requests, or any questions:</p>
+      <p><strong>Email:</strong> <a href="mailto:maxime.begin@gmail.com">maxime.begin@gmail.com</a></p>
+    </div>
+    <p>We typically respond within 48 hours.</p>
+
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <h3>How do I restore my premium purchase?</h3>
+      <p>Go to Profile (bottom-right tab) and tap "Restore Purchases". This will re-activate your premium features if you've previously purchased them on the same Google or Apple account.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>When does the daily puzzle reset?</h3>
+      <p>A new puzzle is available every day at midnight UTC. Depending on your timezone, this may appear in the evening of the previous day.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What are the difficulty tiers?</h3>
+      <p>NonoPix has three tiers: Beginner, Regular, and Expert. Each tier offers the same themed image at different grid sizes. You'll be promoted to the next tier as you improve.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How does the scoring system work?</h3>
+      <p>Your score is based on solve time relative to the puzzle's par time, with penalties for errors and hints used. A flawless solve (no errors, no hints) earns a bonus. Scores range from 0 to 100.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Can I delete my data?</h3>
+      <p>Yes. Email us at <a href="mailto:maxime.begin@gmail.com">maxime.begin@gmail.com</a> and we'll delete your data within 30 days. See our <a href="/privacy-policy">Privacy Policy</a> for details.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>The app crashed or something looks wrong</h3>
+      <p>Please email us with your device model, Android/iOS version, and a description of what happened. Screenshots help a lot!</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="footer-tagline">Daily Nonogram Puzzles</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/privacy-policy">Privacy Policy</a></li>
+      <li><a href="/support">Support</a></li>
+    </ul>
+    <span class="footer-copy">&copy; 2026 NonoPix</span>
+  </footer>
+
+</body>
+</html>
