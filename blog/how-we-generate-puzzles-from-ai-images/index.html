@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How We Generate 100 Puzzles a Week From AI Images — Nonopix</title>
+  <meta name="description" content="The surprisingly tricky pipeline behind turning AI-generated silhouettes into solvable nonogram puzzles — and the bugs that made half of them come out backwards.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #f5f0e8;
+      --bg-alt:       #ece6da;
+      --surface:      #faf7f2;
+      --primary:      #e8735a;
+      --primary-light:#f0a848;
+      --text:         #3d2e1e;
+      --text-heading: #2a1f12;
+      --text-muted:   #8a7560;
+      --border:       #e0d6c8;
+      --radius:       12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.65rem;
+      color: var(--text-heading);
+    }
+    .logo-text span { color: var(--primary); }
+    .logo-sub {
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+    nav ul { list-style: none; display: flex; gap: 1.75rem; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: var(--text); }
+
+    /* ---- ARTICLE ---- */
+    .article {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+      flex: 1;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--primary-light); }
+
+    .article-header {
+      margin-bottom: 2.5rem;
+    }
+    .article-header time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .article-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--text-heading);
+      line-height: 1.25;
+      margin: 0.75rem 0 0;
+    }
+
+    .article-body h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.35rem;
+      color: var(--text-heading);
+      margin: 2.25rem 0 0.75rem;
+    }
+    .article-body p {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+    .article-body strong {
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .footer-brand .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text-heading);
+    }
+    .footer-brand .logo-text span { color: var(--primary); }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      nav ul { gap: 1rem; }
+      .article { padding: 1.5rem 1.25rem 3rem; }
+      .article-header h1 { font-size: 1.6rem; }
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 2rem 1.25rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="logo-sub">Daily Nonogram</span>
+    </a>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+  </nav>
+
+  <article class="article">
+    <a href="/blog" class="back-link">&larr; Back to Blog</a>
+
+    <header class="article-header">
+      <time datetime="2026-04-08">April 8, 2026</time>
+      <h1>How We Generate 100 Puzzles a Week From AI Images</h1>
+    </header>
+
+    <div class="article-body">
+      <p>NonoPix ships seven new puzzles every week across three difficulty tiers. That's 21 hand-curated puzzles per week, each one solvable by pure logic, each one recognizable as a little pixel art image when you're done. For a solo project, that's a lot of content to produce. This post is about the pipeline that makes it possible — and the surprisingly annoying problems I had to solve along the way.</p>
+
+      <h2>The Problem</h2>
+
+      <p>A nonogram puzzle is a grid where you fill in cells to reveal a hidden picture. The constraint is that the puzzle has to be solvable through logic alone — no guessing. You look at the number clues along each row and column, and there should be exactly one valid arrangement of filled and empty cells that satisfies all of them.</p>
+
+      <p>That "exactly one valid arrangement" part is where things get hard. You can't just take any image, shrink it to a 15x15 grid, and call it a puzzle. Most images, when reduced to that few pixels, produce grids that are ambiguous — the clues could describe multiple valid solutions. The player would have to guess, and guessing isn't fun.</p>
+
+      <p>So the question becomes: how do you produce enough good puzzles, fast enough, without spending all day manually designing grids in a pixel editor?</p>
+
+      <h2>How It Used to Work</h2>
+
+      <p>The first version of the pipeline was simple. Generate a silhouette image using Stable Diffusion (Flux Schnell running locally through ComfyUI), shrink it down to the target grid size, convert to black and white using a brightness threshold, then run a constraint propagation solver to check if the result is solvable.</p>
+
+      <p>If the grid wasn't solvable at one threshold, try a few others. If none worked, try inverting the image. That was about it.</p>
+
+      <p>It worked, kind of. Maybe half the images produced solvable puzzles. The other half just... didn't. And the failure mode was invisible — a grid would come back marked "solvable" but when you looked at it in the admin panel, it was clearly wrong. The image of a seahorse would look like a solid blob. Or worse, it would look like the negative of the seahorse — all the empty space filled in, all the detail gone.</p>
+
+      <p>The root cause was that the pipeline only cared about solvability. It never asked: does this grid actually look like the thing it's supposed to be?</p>
+
+      <h2>What Changed</h2>
+
+      <p>The new pipeline searches across three dimensions instead of one. Instead of only trying different brightness thresholds, it also tries different resize algorithms and different levels of dilation — thickening thin features before shrinking them down. A trident's prongs or an octopus's tentacles disappear when you go from 1024 pixels to 15 pixels using nearest-neighbor sampling. Switching to Lanczos resampling and dilating thin lines by a few pixels at high resolution before downscaling made a real difference.</p>
+
+      <p>But the bigger change was adding a fidelity score. After generating each candidate grid, the pipeline compares it back to the original high-resolution image. For each cell in the grid, it checks whether the majority of corresponding pixels in the source image agree. A grid where 95% of cells match the original gets a high fidelity score. A grid that's been accidentally inverted gets around 50% — basically random.</p>
+
+      <p>This turned out to be the fix for the "everything looks backwards" problem. What was happening: for some images, the normal orientation wasn't solvable at any threshold, but the inverted version was. The old pipeline would happily accept the inverted grid because it only checked solvability. The new pipeline rejects any grid below 70% fidelity, regardless of whether it's solvable. An accurate-looking unsolvable grid is more useful than a solvable grid that looks like garbage — at least you can try to fix the first one.</p>
+
+      <h2>Fixing the Last Few Percent</h2>
+
+      <p>That left a new category of results: grids that look right but aren't quite solvable. The solver would get through 90% of the cells and then stall on a small cluster of ambiguous pixels. I used to fix these by hand in the grid editor — flip one or two cells until the ambiguity breaks. It's tedious but it works, because usually the problem is a tiny symmetric pattern that creates two equally valid solutions.</p>
+
+      <p>So I automated it. After the search finds a high-fidelity grid that's almost solvable, a repair step kicks in. It looks at the cells the solver couldn't determine, tries flipping each one individually, and re-runs the solver. If a single flip makes the whole puzzle solvable, it takes it. If not, it tries pairs of flips, prioritizing cells that share a row or column with other ambiguous cells. As a last resort, it tries flipping solved cells that are adjacent to the ambiguous region — sometimes the problem isn't in the unknown cells themselves but in a neighbor that's creating the symmetry.</p>
+
+      <p>Most near-misses get fixed with one or two pixel changes. The fidelity barely moves — you're changing one cell out of 625 on a 25x25 grid. The puzzle goes from "unsolvable" to "fully solvable by logic" and the image still looks like what it's supposed to be.</p>
+
+      <h2>The Numbers</h2>
+
+      <p>Before the new pipeline, I'd generate 8 image attempts per subject and get solvable grids at all four sizes (10x10 through 25x25) maybe 50-70% of the time. After: 96 out of 96 attempts came back fully solvable across all sizes on the first batch I ran through it. Some of that is the threshold/kernel/dilation search finding solutions the old pipeline missed. Some of it is the repair step fixing near-misses. Either way, I went from manually triaging dozens of failed attempts to basically just picking which images I like best.</p>
+
+      <p>The workflow now is: pick a theme, write 12 subject descriptions, run one command, go make coffee, come back to a batch of 96 attempts ready for review in the admin panel. Select the best-looking one per subject, assign them to days, hit finalize. Done.</p>
+
+      <h2>What's Still Not Great</h2>
+
+      <p>Some images just don't work as nonograms at certain sizes. A sea turtle with lots of flowing kelp around it might make a beautiful 10x10 silhouette but produce an ambiguous mess at 25x25. More pixels means more opportunities for the clues to be ambiguous. The repair step can fix grids that are 85%+ solved, but if the solver only gets through 30% of the cells, there's nothing to salvage — the image fundamentally has too much symmetry or too little internal structure at that resolution.</p>
+
+      <p>The current fix for this is just to generate enough alternatives. Twelve subjects per weekly theme, pick the eight that work best across all sizes. It's a brute-force solution to what is ultimately an artistic problem: some shapes make good puzzles and some don't.</p>
+
+      <p>I'd like to eventually get smarter about this — maybe scoring images for nonogram-friendliness before even attempting the conversion, or biasing the image generation toward shapes with more asymmetry and internal structure. But honestly, the current pipeline is fast enough that throwing extra attempts at the problem is cheaper than engineering a more elegant solution. At least for now.</p>
+
+      <p>And to be clear — none of this removes the need for a human pass. The pipeline gets you from "96 raw images" to "here are your best options, all solvable, all verified." But someone still needs to look at the final grids and make sure the seahorse actually reads as a seahorse and not a lumpy blob. Solvability and fidelity scores can tell you a grid is technically correct. They can't tell you it's satisfying to solve, or that the reveal will make someone smile. That last judgment call is still mine, and I don't think I'd want to automate it even if I could.</p>
+
+      <p>The other limitation is that all of this is optimizing for solvability, not for difficulty. A puzzle can be fully solvable but boring — every cell determined on the first pass, no interesting deductions required. The pipeline does compute a difficulty score, and the admin panel shows it, but it doesn't yet filter for it automatically. That's still a judgment call I make during curation. Eventually I'd like the system to target specific difficulty ranges per day of the week, but that's a problem for later.</p>
+
+      <p><strong>Want to see the results?</strong> NonoPix is free on <a href="https://play.google.com/store/apps/details?id=app.nono.daily">Google Play</a>. New themed puzzles every week.</p>
+    </div>
+  </article>
+
+  <footer>
+    <div class="footer-brand">
+      <span class="logo-text">Nono<span>Pix</span></span>
+      <span class="footer-tagline">Daily Nonogram Puzzles</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+    <span class="footer-copy">&copy; 2026 NonoPix</span>
+  </footer>
+
+</body>
+</html>
